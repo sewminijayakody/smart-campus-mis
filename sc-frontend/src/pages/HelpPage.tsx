@@ -36,15 +36,20 @@ const HelpPage = () => {
           setAuthFailed(true);
           return;
         }
-        const response = await fetch("http://localhost:5000/api/inquiries", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/inquiries`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(`HTTP error! status: ${response.status}, response: ${errorText}`);
+          console.error(
+            `HTTP error! status: ${response.status}, response: ${errorText}`
+          );
           if (response.status === 401 || response.status === 403) {
             setAuthFailed(true);
             localStorage.removeItem("token");
@@ -56,7 +61,9 @@ const HelpPage = () => {
         }
         const data = await response.json();
         console.log("Fetched inquiries data:", data);
-        const userInquiries = data.filter((inq: Inquiry) => inq.user_id === user.id);
+        const userInquiries = data.filter(
+          (inq: Inquiry) => inq.user_id === user.id
+        );
         setInquiries(userInquiries.length > 0 ? userInquiries : []);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -96,17 +103,24 @@ const HelpPage = () => {
       if (!token) {
         throw new Error("No token found");
       }
-      const response = await fetch("http://localhost:5000/api/inquiries", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newInquiryItem),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/inquiries`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(newInquiryItem),
+        }
+      );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error || "Unknown error"}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${
+            errorData.error || "Unknown error"
+          }`
+        );
       }
       const data = await response.json();
       setInquiries((prev) => (prev ? [...prev, data] : [data]));
@@ -123,8 +137,13 @@ const HelpPage = () => {
   };
 
   const handleBack = () => {
-    navigate(user?.role === "lecturer" ? "/lecturer-dashboard" : "/student-dashboard");
-    console.log("Navigating to", user?.role === "lecturer" ? "/lecturer-dashboard" : "/student-dashboard");
+    navigate(
+      user?.role === "lecturer" ? "/lecturer-dashboard" : "/student-dashboard"
+    );
+    console.log(
+      "Navigating to",
+      user?.role === "lecturer" ? "/lecturer-dashboard" : "/student-dashboard"
+    );
   };
 
   // Function to format the submittedDate to a relative time string using dayjs
@@ -153,7 +172,9 @@ const HelpPage = () => {
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-50 p-6 text-black">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 text-black">Loading...</div>
+    );
   }
 
   return (
@@ -177,7 +198,9 @@ const HelpPage = () => {
               className="bg-[#E8E9E9] p-4 rounded-lg shadow-md border-2 border-gray-300 space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700">Subject</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Subject
+                </label>
                 <input
                   type="text"
                   value={newInquiry.subject}
@@ -190,7 +213,9 @@ const HelpPage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Message</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Message
+                </label>
                 <textarea
                   value={newInquiry.message}
                   onChange={(e) =>
@@ -215,12 +240,15 @@ const HelpPage = () => {
             <h2 className="text-xl font-semibold mb-4">Your Inquiries</h2>
             <div className="bg-[#E8E9E9] p-4 rounded-lg shadow-md border-2 border-gray-300">
               {inquiries?.length === 0 ? (
-                <p className="text-sm text-gray-500">No inquiries submitted yet.</p>
+                <p className="text-sm text-gray-500">
+                  No inquiries submitted yet.
+                </p>
               ) : (
                 <ul className="space-y-2">
                   {inquiries?.map((inquiry) => (
                     <li key={inquiry.id} className="text-sm text-gray-700">
-                      <strong>{inquiry.subject}</strong> - {inquiry.status} (Submitted: {formatRelativeTime(inquiry.submittedDate)})
+                      <strong>{inquiry.subject}</strong> - {inquiry.status}{" "}
+                      (Submitted: {formatRelativeTime(inquiry.submittedDate)})
                       {inquiry.adminReply && (
                         <p className="mt-1 text-sm text-gray-700">
                           Admin Reply: {inquiry.adminReply}

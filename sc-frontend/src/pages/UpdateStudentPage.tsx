@@ -30,9 +30,12 @@ const UpdateStudentPage: React.FC = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get(`http://localhost:5000/api/students/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/students/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           console.log("Fetched student:", response.data);
           setStudent(response.data);
           setFormData(response.data);
@@ -68,18 +71,24 @@ const UpdateStudentPage: React.FC = () => {
       }
 
       await axios.put(
-        `http://localhost:5000/api/students/${id}`,
+        `${import.meta.env.VITE_API_URL}/students/${id}`,
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      navigate("/manage-students", { state: { success: "Student updated successfully!" } });
+      navigate("/manage-students", {
+        state: { success: "Student updated successfully!" },
+      });
     } catch (error) {
       console.error("Error updating student:", error);
       if (error instanceof AxiosError) {
         if (error.response) {
-          setError(`Update failed: ${error.response.data.error || error.response.statusText}`);
+          setError(
+            `Update failed: ${
+              error.response.data.error || error.response.statusText
+            }`
+          );
         } else if (error.request) {
           setError("No response from server. Check your connection.");
         } else {
@@ -115,7 +124,9 @@ const UpdateStudentPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-6 text-gray-800">
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Update Student Profile</h1>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Update Student Profile
+          </h1>
           <button
             onClick={handleBack}
             className="flex items-center justify-center w-12 h-12 bg-[#FF7700] text-white rounded-full shadow-lg hover:bg-orange-600 transition-transform transform hover:scale-110"
@@ -132,7 +143,10 @@ const UpdateStudentPage: React.FC = () => {
         <div className="bg-white rounded-xl shadow-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Name
               </label>
               <input
@@ -146,7 +160,10 @@ const UpdateStudentPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -160,7 +177,10 @@ const UpdateStudentPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Phone
               </label>
               <input
@@ -174,7 +194,10 @@ const UpdateStudentPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Address
               </label>
               <input
@@ -188,7 +211,10 @@ const UpdateStudentPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="startDate"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Start Date
               </label>
               <input
@@ -202,7 +228,10 @@ const UpdateStudentPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="endDate"
+                className="block text-sm font-medium text-gray-700"
+              >
                 End Date
               </label>
               <input
@@ -216,7 +245,10 @@ const UpdateStudentPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="course" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="course"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Course
               </label>
               <input

@@ -39,18 +39,26 @@ const AnnouncementsPage = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get<BackendAnnouncement[]>("http://localhost:5000/api/announcements", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get<BackendAnnouncement[]>(
+            `${import.meta.env.VITE_API_URL}/announcements`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           // Sort announcements by sent_at in descending order (newest first)
           const sortedAnnouncements = response.data.sort(
-            (a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+            (a, b) =>
+              new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
           );
-          const fetchedAnnouncements: Announcement[] = sortedAnnouncements.map((item) => ({
-            id: item.id,
-            message: item.message,
-            date: `📅 Sent on: ${new Date(item.sent_at).toLocaleDateString()}`,
-          }));
+          const fetchedAnnouncements: Announcement[] = sortedAnnouncements.map(
+            (item) => ({
+              id: item.id,
+              message: item.message,
+              date: `📅 Sent on: ${new Date(
+                item.sent_at
+              ).toLocaleDateString()}`,
+            })
+          );
           setAnnouncements(fetchedAnnouncements);
         }
       } catch (err) {
@@ -101,7 +109,10 @@ const AnnouncementsPage = () => {
         </div>
         <div className="space-y-4">
           {announcements.map((announcement) => (
-            <div key={announcement.id} className="bg-yellow-100 p-4 rounded-lg shadow-sm">
+            <div
+              key={announcement.id}
+              className="bg-yellow-100 p-4 rounded-lg shadow-sm"
+            >
               <p className="text-sm text-gray-700">{announcement.message}</p>
               <p className="text-xs text-gray-500 mt-1">{announcement.date}</p>
             </div>

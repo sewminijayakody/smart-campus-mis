@@ -35,11 +35,18 @@ const LecturerProfilePage = () => {
         module: user.module || "",
       });
       setPreviewImage(user.imageUrl || userImage);
-      console.log("LecturerProfilePage: Initial render - user:", user, "previewImage:", previewImage);
+      console.log(
+        "LecturerProfilePage: Initial render - user:",
+        user,
+        "previewImage:",
+        previewImage
+      );
     }
   }, [user, navigate]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -51,7 +58,10 @@ const LecturerProfilePage = () => {
       reader.onloadend = () => {
         setSelectedImage(file);
         setPreviewImage(reader.result as string);
-        console.log("LecturerProfilePage: Image selected - data URL:", reader.result);
+        console.log(
+          "LecturerProfilePage: Image selected - data URL:",
+          reader.result
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -85,7 +95,7 @@ const LecturerProfilePage = () => {
 
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/lecturer/profile",
+        `${import.meta.env.VITE_API_URL}/lecturer/profile`,
         data,
         {
           headers: {
@@ -120,11 +130,11 @@ const LecturerProfilePage = () => {
   // Logout functionality
   const handleLogout = () => {
     // Clear localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('course');
-    localStorage.removeItem('module');
-    localStorage.removeItem('profileImageUrl');
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("course");
+    localStorage.removeItem("module");
+    localStorage.removeItem("profileImageUrl");
 
     // Reset user context
     setUser(null);
@@ -204,7 +214,9 @@ const LecturerProfilePage = () => {
               )}
               <form onSubmit={handleSubmit}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Name
+                  </label>
                   <input
                     type="text"
                     name="name"
@@ -215,7 +227,9 @@ const LecturerProfilePage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -226,7 +240,9 @@ const LecturerProfilePage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Phone
+                  </label>
                   <input
                     type="tel"
                     name="phone"
@@ -237,7 +253,9 @@ const LecturerProfilePage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Address</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Address
+                  </label>
                   <textarea
                     name="address"
                     value={formData.address}
@@ -247,7 +265,9 @@ const LecturerProfilePage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Course</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Course
+                  </label>
                   <input
                     type="text"
                     name="course"
@@ -258,7 +278,9 @@ const LecturerProfilePage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Module</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Module
+                  </label>
                   <input
                     type="text"
                     name="module"

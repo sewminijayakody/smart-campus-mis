@@ -1,4 +1,4 @@
-import { IconType } from "react-icons";
+
 import { FaQuestionCircle } from "react-icons/fa";
 
 type ButtonTypes = {

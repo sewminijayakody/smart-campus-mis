@@ -1,7 +1,14 @@
 // src/pages/LecturerDashboard.tsx
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaUserCircle, FaUsers, FaCalendarAlt, FaBox, FaCloudUploadAlt, FaQuestionCircle } from "react-icons/fa";
+import {
+  FaUserCircle,
+  FaUsers,
+  FaCalendarAlt,
+  FaBox,
+  FaCloudUploadAlt,
+  FaQuestionCircle,
+} from "react-icons/fa";
 import LecturerCourseDetails from "../components/LecturerCourseDetails"; // Updated import
 import RecentNotifications from "../components/RecentNotifications";
 import ViewAnnouncements from "../components/ViewAnnouncements";
@@ -33,7 +40,7 @@ const LecturerDashboard = () => {
 
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/lecturer/dashboard",
+          `${import.meta.env.VITE_API_URL}/lecturer/dashboard`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -51,7 +58,7 @@ const LecturerDashboard = () => {
           imageUrl: lecturerData.imageUrl || null,
           module: lecturerData.module || "",
           startDate: "",
-          endDate: ""
+          endDate: "",
         });
         if (lecturerData.imageUrl) {
           setImageUrl(lecturerData.imageUrl);
@@ -75,16 +82,27 @@ const LecturerDashboard = () => {
       try {
         const token = localStorage.getItem("token");
         if (!token || !user?.id) {
-          console.log("No token or user ID available for fetching registrations");
+          console.log(
+            "No token or user ID available for fetching registrations"
+          );
           return;
         }
-        const response = await axios.get("http://localhost:5000/api/events/registrations", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/events/registrations`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const userRegistrations = response.data;
-        console.log("Fetched registered events from backend:", userRegistrations);
+        console.log(
+          "Fetched registered events from backend:",
+          userRegistrations
+        );
         setRegisteredEvents(userRegistrations);
-        localStorage.setItem("registeredEvents", JSON.stringify(userRegistrations));
+        localStorage.setItem(
+          "registeredEvents",
+          JSON.stringify(userRegistrations)
+        );
       } catch (error) {
         console.error("Error fetching registered events:", error);
       }
@@ -105,14 +123,23 @@ const LecturerDashboard = () => {
         setSelectedDate(state.selectedDate);
       }
       if (state?.registeredEvents) {
-        console.log("Setting registeredEvents from location state:", state.registeredEvents);
+        console.log(
+          "Setting registeredEvents from location state:",
+          state.registeredEvents
+        );
         setRegisteredEvents(state.registeredEvents);
-        localStorage.setItem("registeredEvents", JSON.stringify(state.registeredEvents));
+        localStorage.setItem(
+          "registeredEvents",
+          JSON.stringify(state.registeredEvents)
+        );
       } else {
         const savedRegistrations = localStorage.getItem("registeredEvents");
         if (savedRegistrations) {
           const parsedRegistrations = JSON.parse(savedRegistrations);
-          console.log("Setting registeredEvents from localStorage:", parsedRegistrations);
+          console.log(
+            "Setting registeredEvents from localStorage:",
+            parsedRegistrations
+          );
           setRegisteredEvents(parsedRegistrations);
         }
       }
@@ -125,10 +152,16 @@ const LecturerDashboard = () => {
           });
         }
         localStorage.setItem("profileImageUrl", state.updatedImageUrl);
-        console.log("Set imageUrl from navigation state:", state.updatedImageUrl);
+        console.log(
+          "Set imageUrl from navigation state:",
+          state.updatedImageUrl
+        );
       } else {
         const storedImageUrl = localStorage.getItem("profileImageUrl");
-        if (storedImageUrl && (!user?.imageUrl || user.imageUrl !== storedImageUrl)) {
+        if (
+          storedImageUrl &&
+          (!user?.imageUrl || user.imageUrl !== storedImageUrl)
+        ) {
           setImageUrl(storedImageUrl);
           if (user) {
             setUser({
@@ -157,7 +190,9 @@ const LecturerDashboard = () => {
 
   const handleCollaborationClick = () => {
     if (!user || !user.id) {
-      console.log("User data not ready, delaying navigation to /chat", { user });
+      console.log("User data not ready, delaying navigation to /chat", {
+        user,
+      });
       return;
     }
     console.log("Navigating to /chat with user:", user);
@@ -181,7 +216,6 @@ const LecturerDashboard = () => {
   };
 
   // New navigation handlers for Notifications and Announcements
-
 
   if (loading) return <div>Loading...</div>;
 
@@ -259,7 +293,6 @@ const LecturerDashboard = () => {
           </div>
         </div>
       </div>
-
 
       <div className="absolute top-24 right-12 w-[400px] mt-0 z-0">
         <ScheduleSection

@@ -29,24 +29,23 @@ const StudentDashboard = () => {
   );
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
     const fetchStudentData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        navigate("/"); 
+        navigate("/");
         return;
       }
 
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/student/dashboard",
+          `${import.meta.env.VITE_API_URL}/student/dashboard`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         const studentData = res.data.student;
-        console.log("Fetched student data:", studentData); 
+        console.log("Fetched student data:", studentData);
         setUser({
           id: studentData.id,
           role: studentData.role,
@@ -66,7 +65,7 @@ const StudentDashboard = () => {
         }
       } catch (err) {
         console.error("Error fetching student data:", err);
-        navigate("/"); 
+        navigate("/");
       } finally {
         setLoading(false);
       }
@@ -80,25 +79,35 @@ const StudentDashboard = () => {
       try {
         const token = localStorage.getItem("token");
         if (!token || !user?.id) {
-          console.log("No token or user ID available for fetching registrations");
+          console.log(
+            "No token or user ID available for fetching registrations"
+          );
           return;
         }
-        const response = await axios.get("http://localhost:5000/api/events/registrations", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/events/registrations`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const userRegistrations = response.data;
-        console.log("Fetched registered events from backend:", userRegistrations);
+        console.log(
+          "Fetched registered events from backend:",
+          userRegistrations
+        );
         setRegisteredEvents(userRegistrations);
-        localStorage.setItem("registeredEvents", JSON.stringify(userRegistrations));
+        localStorage.setItem(
+          "registeredEvents",
+          JSON.stringify(userRegistrations)
+        );
       } catch (error) {
         console.error("Error fetching registered events:", error);
       }
     };
 
     fetchRegisteredEvents();
-  }, [user?.id]); 
+  }, [user?.id]);
 
-  
   useEffect(() => {
     if (location.pathname === "/student-dashboard") {
       const state = location.state as {
@@ -110,14 +119,23 @@ const StudentDashboard = () => {
         setSelectedDate(state.selectedDate);
       }
       if (state?.registeredEvents) {
-        console.log("Setting registeredEvents from location state:", state.registeredEvents);
+        console.log(
+          "Setting registeredEvents from location state:",
+          state.registeredEvents
+        );
         setRegisteredEvents(state.registeredEvents);
-        localStorage.setItem("registeredEvents", JSON.stringify(state.registeredEvents));
+        localStorage.setItem(
+          "registeredEvents",
+          JSON.stringify(state.registeredEvents)
+        );
       } else {
         const savedRegistrations = localStorage.getItem("registeredEvents");
         if (savedRegistrations) {
           const parsedRegistrations = JSON.parse(savedRegistrations);
-          console.log("Setting registeredEvents from localStorage:", parsedRegistrations);
+          console.log(
+            "Setting registeredEvents from localStorage:",
+            parsedRegistrations
+          );
           setRegisteredEvents(parsedRegistrations);
         }
       }
@@ -130,7 +148,10 @@ const StudentDashboard = () => {
           });
         }
         localStorage.setItem("profileImageUrl", state.updatedImageUrl);
-        console.log("Set imageUrl from navigation state:", state.updatedImageUrl);
+        console.log(
+          "Set imageUrl from navigation state:",
+          state.updatedImageUrl
+        );
       } else {
         const storedImageUrl = localStorage.getItem("profileImageUrl");
         if (
@@ -179,7 +200,9 @@ const StudentDashboard = () => {
 
   const handleCollaborationClick = () => {
     if (!user || !user.id) {
-      console.log("User data not ready, delaying navigation to /chat", { user });
+      console.log("User data not ready, delaying navigation to /chat", {
+        user,
+      });
       return; // Prevent navigation until user is ready
     }
     console.log("Navigating to /chat with user:", user);

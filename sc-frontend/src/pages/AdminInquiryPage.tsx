@@ -31,12 +31,15 @@ const AdminInquiryPage = () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
-        const response = await fetch("http://localhost:5000/api/inquiries", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/inquiries`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -55,7 +58,7 @@ const AdminInquiryPage = () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
-        const response = await fetch("http://localhost:5000/api/users", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -91,14 +94,19 @@ const AdminInquiryPage = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/inquiries/${selectedInquiry.id}/respond`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add token here too
-        },
-        body: JSON.stringify(responseData),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/inquiries/${
+          selectedInquiry.id
+        }/respond`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Add token here too
+          },
+          body: JSON.stringify(responseData),
+        }
+      );
 
       if (res.ok) {
         setInquiries(
@@ -134,7 +142,9 @@ const AdminInquiryPage = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-50 p-6 text-black">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 text-black">Loading...</div>
+    );
   }
 
   return (
@@ -161,14 +171,17 @@ const AdminInquiryPage = () => {
                   <li
                     key={inquiry.id}
                     className={`p-4 border-2 rounded-md ${
-                      inquiry.status === "Pending" ? "border-yellow-400" : "border-green-400"
+                      inquiry.status === "Pending"
+                        ? "border-yellow-400"
+                        : "border-green-400"
                     }`}
                     onClick={() => handleSelectInquiry(inquiry)}
                   >
                     <h3 className="font-semibold">{inquiry.subject}</h3>
                     <p>{inquiry.status}</p>
                     <p className="text-sm text-gray-500">
-                      Submitted: {formatDate(inquiry.submittedDate)} by {getUserName(inquiry.user_id)}
+                      Submitted: {formatDate(inquiry.submittedDate)} by{" "}
+                      {getUserName(inquiry.user_id)}
                     </p>
                   </li>
                 ))}
@@ -187,7 +200,8 @@ const AdminInquiryPage = () => {
                   <strong>Message:</strong> {selectedInquiry.message}
                 </p>
                 <p className="mt-2">
-                  <strong>Submitted by:</strong> {getUserName(selectedInquiry.user_id)}
+                  <strong>Submitted by:</strong>{" "}
+                  {getUserName(selectedInquiry.user_id)}
                 </p>
                 <div className="mt-4">
                   <label className="block text-sm font-medium text-gray-700">

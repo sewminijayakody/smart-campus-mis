@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaPen, FaCamera, FaSignOutAlt } from "react-icons/fa"; // Added FaSignOutAlt for logout icon
 import userImage from "../assets/images/Picture3.png";
 import { useUser } from "../context/UserContext";
-import axios from 'axios';
+import axios from "axios";
 
 const UserProfilePage = () => {
   const navigate = useNavigate();
@@ -15,7 +15,12 @@ const UserProfilePage = () => {
   useEffect(() => {
     if (user) {
       setPreviewImage(user.imageUrl || userImage);
-      console.log("UserProfilePage: Initial render - user:", user, "previewImage:", previewImage);
+      console.log(
+        "UserProfilePage: Initial render - user:",
+        user,
+        "previewImage:",
+        previewImage
+      );
     }
   }, [user]);
 
@@ -26,7 +31,10 @@ const UserProfilePage = () => {
       reader.onloadend = () => {
         setSelectedImage(file);
         setPreviewImage(reader.result as string);
-        console.log("UserProfilePage: Image selected - data URL:", reader.result);
+        console.log(
+          "UserProfilePage: Image selected - data URL:",
+          reader.result
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -38,39 +46,50 @@ const UserProfilePage = () => {
 
   const handleUpdateProfileImage = async () => {
     if (!selectedImage) {
-      alert('Please select an image to upload.');
+      alert("Please select an image to upload.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('image', selectedImage);
+    formData.append("image", selectedImage);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        alert('You must be logged in to update your profile image.');
+        alert("You must be logged in to update your profile image.");
         return;
       }
 
-      const res = await axios.post('http://localhost:5000/api/auth/update-image', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/update-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       const newImageUrl = res.data.imageUrl;
       if (user) {
         setUser({ ...user, imageUrl: newImageUrl });
         setPreviewImage(newImageUrl);
-        localStorage.setItem('profileImageUrl', newImageUrl);
-        console.log("UserProfilePage: Image updated - new imageUrl:", newImageUrl, "user:", { ...user, imageUrl: newImageUrl });
-        navigate("/student-dashboard", { state: { updatedImageUrl: newImageUrl } });
+        localStorage.setItem("profileImageUrl", newImageUrl);
+        console.log(
+          "UserProfilePage: Image updated - new imageUrl:",
+          newImageUrl,
+          "user:",
+          { ...user, imageUrl: newImageUrl }
+        );
+        navigate("/student-dashboard", {
+          state: { updatedImageUrl: newImageUrl },
+        });
         alert("Profile image updated successfully!");
       }
     } catch (error) {
-      console.error('Image upload error:', error);
-      alert('Failed to update profile image. Please try again.');
+      console.error("Image upload error:", error);
+      alert("Failed to update profile image. Please try again.");
     }
   };
 
@@ -81,11 +100,11 @@ const UserProfilePage = () => {
   // Logout functionality
   const handleLogout = () => {
     // Clear localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('course');
-    localStorage.removeItem('module');
-    localStorage.removeItem('profileImageUrl');
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("course");
+    localStorage.removeItem("module");
+    localStorage.removeItem("profileImageUrl");
 
     // Reset user context
     setUser(null);
@@ -115,7 +134,7 @@ const UserProfilePage = () => {
                 className="w-24 h-24 rounded-full border-2 border-blue-300 cursor-pointer"
                 onClick={handleImageClick}
                 style={{ position: "relative" }}
-                onError={(e) => console.error('Image load error:', e)}
+                onError={(e) => console.error("Image load error:", e)}
               />
               <button
                 onClick={handleImageClick}
@@ -154,7 +173,9 @@ const UserProfilePage = () => {
 
             <div className="flex-1 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
                 <input
                   type="text"
                   value={user.email || ""}
@@ -163,7 +184,9 @@ const UserProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Phone
+                </label>
                 <input
                   type="text"
                   value={user.phone || ""}
@@ -172,7 +195,9 @@ const UserProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Address</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Address
+                </label>
                 <input
                   type="text"
                   value={user.address || ""}
@@ -181,7 +206,9 @@ const UserProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Start Date
+                </label>
                 <input
                   type="text"
                   value={user.startDate}
@@ -190,7 +217,9 @@ const UserProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">End Date</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  End Date
+                </label>
                 <input
                   type="text"
                   value={user.endDate}
@@ -199,7 +228,9 @@ const UserProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Course</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Course
+                </label>
                 <input
                   type="text"
                   value={user.course}

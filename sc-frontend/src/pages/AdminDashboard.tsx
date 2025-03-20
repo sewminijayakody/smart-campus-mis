@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import io from "socket.io-client";
 import { useUser } from "../context/UserContext"; // Import UserContext
-import userImage from "../assets/images/Picture9.png"
+import userImage from "../assets/images/Picture9.png";
 
 // Define the Event interface
 interface Event {
@@ -55,43 +55,60 @@ const AdminDashboard: React.FC = () => {
         const token = localStorage.getItem("token");
         if (token) {
           // Fetch events
-          const eventsResponse = await axios.get("http://localhost:5000/api/events", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          console.log("Fetched events for AdminDashboard:", eventsResponse.data);
+          const eventsResponse = await axios.get(
+            `${import.meta.env.VITE_API_URL}/events`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          console.log(
+            "Fetched events for AdminDashboard:",
+            eventsResponse.data
+          );
           setEvents(eventsResponse.data);
 
           // Fetch total students
-          const studentsResponse = await axios.get("http://localhost:5000/api/students", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const studentsResponse = await axios.get(
+            `${import.meta.env.VITE_API_URL}/students`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           console.log("Fetched students for count:", studentsResponse.data);
           setTotalStudents(studentsResponse.data.length);
 
           // Fetch total lecturers
-          const lecturersResponse = await axios.get("http://localhost:5000/api/lecturers", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const lecturersResponse = await axios.get(
+            `${import.meta.env.VITE_API_URL}/lecturers`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           console.log("Fetched lecturers for count:", lecturersResponse.data);
           setTotalLecturers(lecturersResponse.data.length);
 
           // Fetch announcements
-          const announcementsResponse = await axios.get("http://localhost:5000/api/announcements", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const sortedAnnouncements = announcementsResponse.data.sort(
-            (a: any, b: any) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+          const announcementsResponse = await axios.get(
+            `${import.meta.env.VITE_API_URL}/announcements`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
           );
-          const formattedAnnouncements: Announcement[] = sortedAnnouncements.map((item: any) => ({
-            id: item.id,
-            message: item.message,
-            date: new Date(item.sent_at).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }),
-            sender_name: item.sender_name,
-          }));
+          const sortedAnnouncements = announcementsResponse.data.sort(
+            (a: any, b: any) =>
+              new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+          );
+          const formattedAnnouncements: Announcement[] =
+            sortedAnnouncements.map((item: any) => ({
+              id: item.id,
+              message: item.message,
+              date: new Date(item.sent_at).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+              sender_name: item.sender_name,
+            }));
           setAnnouncements(formattedAnnouncements);
         }
       } catch (error) {
@@ -150,17 +167,30 @@ const AdminDashboard: React.FC = () => {
   // Navigation for admin profile
   const handleProfileClick = () => navigate("/admin-profile");
 
-  const handlePrevMonth = () => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)));
-  const handleNextMonth = () => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)));
+  const handlePrevMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+    );
+  const handleNextMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+    );
   const handleDateSelect = (day: number) => {
-    const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+    const newDate = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      day
+    );
     setSelectedDate(newDate);
   };
 
-  const getMonthName = (date: Date) => date.toLocaleString("default", { month: "long" });
+  const getMonthName = (date: Date) =>
+    date.toLocaleString("default", { month: "long" });
   const getYear = (date: Date) => date.getFullYear();
-  const getDaysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  const getFirstDayOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  const getDaysInMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  const getFirstDayOfMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
   const filteredEvents = events.filter((event) => {
     const eventDate = new Date(event.date);
@@ -245,7 +275,9 @@ const AdminDashboard: React.FC = () => {
               >
                 <FaGraduationCap className="text-3xl text-gray-600" />
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Total Students</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    Total Students
+                  </h3>
                   <p className="text-2xl font-bold text-gray-800">
                     {loading ? "Loading..." : totalStudents}
                   </p>
@@ -257,7 +289,9 @@ const AdminDashboard: React.FC = () => {
               >
                 <FaUserTie className="text-3xl text-gray-600" />
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Total Lecturers</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    Total Lecturers
+                  </h3>
                   <p className="text-2xl font-bold text-gray-800">
                     {loading ? "Loading..." : totalLecturers}
                   </p>
@@ -267,7 +301,9 @@ const AdminDashboard: React.FC = () => {
 
             {/* Announcements */}
             <div className="bg-white p-4 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold mb-4 text-gray-800">Announcements</h2>
+              <h2 className="text-xl font-bold mb-4 text-gray-800">
+                Announcements
+              </h2>
               <div className="space-y-2">
                 {announcements.length > 0 ? (
                   announcements.map((announcement) => (
@@ -280,7 +316,9 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">No announcements available.</p>
+                  <p className="text-sm text-gray-500">
+                    No announcements available.
+                  </p>
                 )}
               </div>
             </div>
@@ -332,42 +370,60 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-7 gap-0.5 text-center">
                       {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
-                        <div key={day} className="text-xxs font-semibold text-gray-600">
+                        <div
+                          key={day}
+                          className="text-xxs font-semibold text-gray-600"
+                        >
                           {day}
                         </div>
                       ))}
-                      {Array.from({ length: getFirstDayOfMonth(currentMonth) }, (_, i) => (
-                        <div key={`empty-${i}`} />
-                      ))}
-                      {Array.from({ length: getDaysInMonth(currentMonth) }, (_, i) => {
-                        const day = i + 1;
-                        const isSelected =
-                          day === selectedDate.getDate() &&
-                          currentMonth.getMonth() === selectedDate.getMonth() &&
-                          currentMonth.getFullYear() === selectedDate.getFullYear();
-                        const isToday =
-                          day === new Date().getDate() &&
-                          currentMonth.getMonth() === new Date().getMonth() &&
-                          currentMonth.getFullYear() === new Date().getFullYear();
-                        return (
-                          <div
-                            key={day}
-                            className={`text-xxs p-1 rounded-full cursor-pointer ${
-                              isSelected ? "bg-[#FF7700] text-white" : isToday ? "bg-orange-300" : "hover:bg-gray-200"
-                            }`}
-                            onClick={() => handleDateSelect(day)}
-                          >
-                            {day}
-                          </div>
-                        );
-                      })}
+                      {Array.from(
+                        { length: getFirstDayOfMonth(currentMonth) },
+                        (_, i) => (
+                          <div key={`empty-${i}`} />
+                        )
+                      )}
+                      {Array.from(
+                        { length: getDaysInMonth(currentMonth) },
+                        (_, i) => {
+                          const day = i + 1;
+                          const isSelected =
+                            day === selectedDate.getDate() &&
+                            currentMonth.getMonth() ===
+                              selectedDate.getMonth() &&
+                            currentMonth.getFullYear() ===
+                              selectedDate.getFullYear();
+                          const isToday =
+                            day === new Date().getDate() &&
+                            currentMonth.getMonth() === new Date().getMonth() &&
+                            currentMonth.getFullYear() ===
+                              new Date().getFullYear();
+                          return (
+                            <div
+                              key={day}
+                              className={`text-xxs p-1 rounded-full cursor-pointer ${
+                                isSelected
+                                  ? "bg-[#FF7700] text-white"
+                                  : isToday
+                                  ? "bg-orange-300"
+                                  : "hover:bg-gray-200"
+                              }`}
+                              onClick={() => handleDateSelect(day)}
+                            >
+                              {day}
+                            </div>
+                          );
+                        }
+                      )}
                     </div>
                   </div>
                 </div>
 
                 {/* Event Details */}
                 {filteredEvents.length === 0 ? (
-                  <p className="text-sm text-gray-500">No events for this date</p>
+                  <p className="text-sm text-gray-500">
+                    No events for this date
+                  </p>
                 ) : (
                   filteredEvents.map((event) => (
                     <div
@@ -377,7 +433,10 @@ const AdminDashboard: React.FC = () => {
                       <p>{event.time}</p>
                       <p>{event.title}</p>
                       <p>Location: {event.location}</p>
-                      <p>No of Registered Participants: {event.registeredUsers || 0}</p>
+                      <p>
+                        No of Registered Participants:{" "}
+                        {event.registeredUsers || 0}
+                      </p>
                     </div>
                   ))
                 )}

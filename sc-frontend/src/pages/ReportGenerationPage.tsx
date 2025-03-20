@@ -21,7 +21,16 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 // Define interfaces for data
 interface User {
@@ -44,8 +53,12 @@ const ReportGenerationPage: React.FC = () => {
   const navigate = useNavigate();
 
   // State for report selection and date range
-  const [reportType, setReportType] = useState<"users" | "announcements" | null>(null);
-  const [startDate, setStartDate] = useState<Date | null>(new Date(new Date().setMonth(new Date().getMonth() - 1))); // Default: last 1 month
+  const [reportType, setReportType] = useState<
+    "users" | "announcements" | null
+  >(null);
+  const [startDate, setStartDate] = useState<Date | null>(
+    new Date(new Date().setMonth(new Date().getMonth() - 1))
+  ); // Default: last 1 month
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [users, setUsers] = useState<User[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -61,14 +74,20 @@ const ReportGenerationPage: React.FC = () => {
         }
 
         if (reportType === "users") {
-          const response = await axios.get<{ users: User[] }>("http://localhost:5000/api/users", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get<{ users: User[] }>(
+            `${import.meta.env.VITE_API_URL}/users`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           setUsers(response.data.users);
         } else if (reportType === "announcements") {
-          const response = await axios.get<Announcement[]>("http://localhost:5000/api/announcements", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get<Announcement[]>(
+            `${import.meta.env.VITE_API_URL}/announcements`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           setAnnouncements(response.data);
         }
       } catch (error) {
@@ -102,7 +121,9 @@ const ReportGenerationPage: React.FC = () => {
   // Prepare user registration trends data
   const getUserRegistrationData = () => {
     const filteredUsers = filterUsersByDateRange(users);
-    const monthlyData: { [key: string]: { students: number; lecturers: number } } = {};
+    const monthlyData: {
+      [key: string]: { students: number; lecturers: number };
+    } = {};
 
     filteredUsers.forEach((user) => {
       const date = new Date(user.created_at);
@@ -164,7 +185,12 @@ const ReportGenerationPage: React.FC = () => {
           {
             label: "Announcements",
             data,
-            backgroundColor: labels.map(() => `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`),
+            backgroundColor: labels.map(
+              () =>
+                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${
+                  Math.random() * 255
+                }, 0.5)`
+            ),
           },
         ],
       },
@@ -175,8 +201,22 @@ const ReportGenerationPage: React.FC = () => {
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text("Smart Campus Report", 20, 20);
-    doc.text(`Report Type: ${reportType === "users" ? "User Registration Trends" : "Announcement Activity"}`, 20, 30);
-    doc.text(`Date Range: ${startDate?.toLocaleDateString() || "N/A"} - ${endDate?.toLocaleDateString() || "N/A"}`, 20, 40);
+    doc.text(
+      `Report Type: ${
+        reportType === "users"
+          ? "User Registration Trends"
+          : "Announcement Activity"
+      }`,
+      20,
+      30
+    );
+    doc.text(
+      `Date Range: ${startDate?.toLocaleDateString() || "N/A"} - ${
+        endDate?.toLocaleDateString() || "N/A"
+      }`,
+      20,
+      40
+    );
 
     if (reportType === "users") {
       const data = getUserRegistrationData();
@@ -185,7 +225,9 @@ const ReportGenerationPage: React.FC = () => {
         body: data.tableData.map((user) => [
           user.name,
           user.role,
-          user.created_at ? new Date(user.created_at).toLocaleDateString() : "N/A",
+          user.created_at
+            ? new Date(user.created_at).toLocaleDateString()
+            : "N/A",
         ]),
         startY: 50,
       });
@@ -196,7 +238,9 @@ const ReportGenerationPage: React.FC = () => {
         body: data.tableData.map((announcement) => [
           announcement.message,
           announcement.sender_name || "Unknown",
-          announcement.sent_at ? new Date(announcement.sent_at).toLocaleDateString() : "N/A",
+          announcement.sent_at
+            ? new Date(announcement.sent_at).toLocaleDateString()
+            : "N/A",
         ]),
         startY: 50,
       });
@@ -212,8 +256,16 @@ const ReportGenerationPage: React.FC = () => {
       return (
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-semibold mb-2">User Registration Trends</h3>
-            <Line data={chartData} options={{ responsive: true, plugins: { legend: { position: "top" } } }} />
+            <h3 className="text-lg font-semibold mb-2">
+              User Registration Trends
+            </h3>
+            <Line
+              data={chartData}
+              options={{
+                responsive: true,
+                plugins: { legend: { position: "top" } },
+              }}
+            />
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-2">User Details</h3>
@@ -230,7 +282,11 @@ const ReportGenerationPage: React.FC = () => {
                   <tr key={user.id}>
                     <td className="border p-2">{user.name}</td>
                     <td className="border p-2">{user.role}</td>
-                    <td className="border p-2">{user.created_at ? new Date(user.created_at).toLocaleDateString() : "N/A"}</td>
+                    <td className="border p-2">
+                      {user.created_at
+                        ? new Date(user.created_at).toLocaleDateString()
+                        : "N/A"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -243,8 +299,16 @@ const ReportGenerationPage: React.FC = () => {
       return (
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-semibold mb-2">Announcement Activity</h3>
-            <Bar data={chartData} options={{ responsive: true, plugins: { legend: { position: "top" } } }} />
+            <h3 className="text-lg font-semibold mb-2">
+              Announcement Activity
+            </h3>
+            <Bar
+              data={chartData}
+              options={{
+                responsive: true,
+                plugins: { legend: { position: "top" } },
+              }}
+            />
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-2">Announcement Details</h3>
@@ -260,8 +324,14 @@ const ReportGenerationPage: React.FC = () => {
                 {tableData.map((announcement) => (
                   <tr key={announcement.id}>
                     <td className="border p-2">{announcement.message}</td>
-                    <td className="border p-2">{announcement.sender_name || "Unknown"}</td>
-                    <td className="border p-2">{announcement.sent_at ? new Date(announcement.sent_at).toLocaleDateString() : "N/A"}</td>
+                    <td className="border p-2">
+                      {announcement.sender_name || "Unknown"}
+                    </td>
+                    <td className="border p-2">
+                      {announcement.sent_at
+                        ? new Date(announcement.sent_at).toLocaleDateString()
+                        : "N/A"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -303,10 +373,14 @@ const ReportGenerationPage: React.FC = () => {
           </label>
           <select
             value={reportType || ""}
-            onChange={(e) => setReportType(e.target.value as "users" | "announcements" | null)}
+            onChange={(e) =>
+              setReportType(e.target.value as "users" | "announcements" | null)
+            }
             className="w-full p-2 border rounded-lg bg-gray-100"
           >
-            <option value="" disabled>Select a report type</option>
+            <option value="" disabled>
+              Select a report type
+            </option>
             <option value="users">User Registration Trends</option>
             <option value="announcements">Announcement Activity</option>
           </select>

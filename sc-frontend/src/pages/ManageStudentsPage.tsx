@@ -37,9 +37,12 @@ const ManageStudentsPage: React.FC = () => {
         const token = localStorage.getItem("token");
         console.log("Token for students fetch:", token);
         if (token) {
-          const response = await axios.get("http://localhost:5000/api/students", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/students`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           console.log("Fetched students:", response.data);
           setStudents(response.data);
         } else {
@@ -66,15 +69,21 @@ const ManageStudentsPage: React.FC = () => {
         console.log("Token for delete:", token);
         console.log("Deleting student with ID:", id);
         if (token) {
-          const response = await axios.delete(`http://localhost:5000/api/students/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.delete(
+            `${import.meta.env.VITE_API_URL}/students/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           console.log("Delete response:", response.data);
           setStudents([]);
           const fetchStudents = async () => {
-            const fetchResponse = await axios.get("http://localhost:5000/api/students", {
-              headers: { Authorization: `Bearer ${token}` },
-            });
+            const fetchResponse = await axios.get(
+              `${import.meta.env.VITE_API_URL}/students`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
             console.log("Refetched students:", fetchResponse.data);
             setStudents(fetchResponse.data);
           };
@@ -91,9 +100,16 @@ const ManageStudentsPage: React.FC = () => {
             console.error("Response data:", error.response.data);
             console.error("Status code:", error.response.status);
             console.error("Response headers:", error.response.headers);
-            setError(`Delete failed: ${error.response.data.error || error.response.statusText}`);
+            setError(
+              `Delete failed: ${
+                error.response.data.error || error.response.statusText
+              }`
+            );
           } else if (error.request) {
-            console.error("No response received. Request details:", error.request);
+            console.error(
+              "No response received. Request details:",
+              error.request
+            );
             setError("No response from server. Check your connection.");
           } else {
             console.error("Error setting up request:", error.message);
@@ -158,7 +174,10 @@ const ManageStudentsPage: React.FC = () => {
                 </thead>
                 <tbody>
                   {students.map((student) => (
-                    <tr key={student.id} className="border-b hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={student.id}
+                      className="border-b hover:bg-gray-50 transition-colors"
+                    >
                       <td className="p-4">{student.name}</td>
                       <td className="p-4">{student.studentId}</td>
                       <td className="p-4">{student.email}</td>
@@ -186,7 +205,9 @@ const ManageStudentsPage: React.FC = () => {
                 </tbody>
               </table>
               {students.length === 0 && (
-                <p className="text-center text-gray-500 py-6">No students registered.</p>
+                <p className="text-center text-gray-500 py-6">
+                  No students registered.
+                </p>
               )}
             </div>
           )}

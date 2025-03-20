@@ -10,8 +10,15 @@ const Chat = () => {
   const { user } = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState<{ id: number; room_id: string; name: string; isGroup: boolean } | null>(null);
-  const [groups, setGroups] = useState<{ id: number; room_id: string; name: string; isGroup: boolean }[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<{
+    id: number;
+    room_id: string;
+    name: string;
+    isGroup: boolean;
+  } | null>(null);
+  const [groups, setGroups] = useState<
+    { id: number; room_id: string; name: string; isGroup: boolean }[]
+  >([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,12 +31,15 @@ const Chat = () => {
       console.log("Fetching users with token:", token);
       console.log("Current user:", user);
       if (!token || !user || !user.id) {
-        console.log("User or token unavailable, skipping fetch", { user, token });
+        console.log("User or token unavailable, skipping fetch", {
+          user,
+          token,
+        });
         return;
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/users/", {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(res.data.users);
@@ -42,7 +52,7 @@ const Chat = () => {
     const fetchGroups = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("http://localhost:5000/api/groups", {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/groups`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const formattedGroups = res.data.groups.map((group: any) => ({
@@ -72,7 +82,11 @@ const Chat = () => {
 
     if (!token) {
       if (retryCount < maxRetries) {
-        console.log(`Waiting for token before socket initialization (Retry ${retryCount + 1}/${maxRetries})`);
+        console.log(
+          `Waiting for token before socket initialization (Retry ${
+            retryCount + 1
+          }/${maxRetries})`
+        );
         setTimeout(() => {
           setRetryCount(retryCount + 1);
         }, 1000);
@@ -88,7 +102,7 @@ const Chat = () => {
 
     const newSocket = io("http://localhost:5000", {
       auth: { token: `Bearer ${token}` },
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
       withCredentials: true,
     });
 
@@ -108,7 +122,11 @@ const Chat = () => {
     });
 
     newSocket.on("receiveMessage", (serverMessage: any) => {
-      console.log("Received message event from server on socket:", newSocket.id, serverMessage);
+      console.log(
+        "Received message event from server on socket:",
+        newSocket.id,
+        serverMessage
+      );
       const message: Message = {
         id: serverMessage.id,
         userId: serverMessage.senderId,
@@ -119,14 +137,20 @@ const Chat = () => {
         groupId: serverMessage.groupId || null,
         senderName: serverMessage.senderName, // Added senderName
       };
-      if (user && message.userId !== user.id && !messages.find((m) => m.id === message.id)) {
+      if (
+        user &&
+        message.userId !== user.id &&
+        !messages.find((m) => m.id === message.id)
+      ) {
         setMessages((prevMessages) => [...prevMessages, message]);
       }
     });
 
     newSocket.on("joinRoom", (data) => {
       const { room } = data;
-      console.log(`Server requested to join room ${room} on socket ${newSocket.id}`);
+      console.log(
+        `Server requested to join room ${room} on socket ${newSocket.id}`
+      );
     });
 
     newSocket.on("connect_error", (err) => {
@@ -149,7 +173,9 @@ const Chat = () => {
       const token = localStorage.getItem("token");
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/messages/${selectedUser ? selectedUser.id : selectedGroup!.room_id}`,
+          `${import.meta.env.VITE_API_URL}/messages/${
+            selectedUser ? selectedUser.id : selectedGroup!.room_id
+          }`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const apiMessages: any[] = res.data.messages;
@@ -163,8 +189,9 @@ const Chat = () => {
           groupId: msg.group_id || null,
           senderName: msg.sender_name, // Added senderName
         }));
-        const uniqueMessages = mappedMessages.filter((msg: Message, index: number, self: Message[]) =>
-          index === self.findIndex((m: Message) => m.id === msg.id)
+        const uniqueMessages = mappedMessages.filter(
+          (msg: Message, index: number, self: Message[]) =>
+            index === self.findIndex((m: Message) => m.id === msg.id)
         );
         setMessages(uniqueMessages);
         console.log("Fetched unique messages from API:", uniqueMessages);
@@ -178,7 +205,12 @@ const Chat = () => {
 
   const handleSendMessage = (text: string) => {
     if ((!selectedUser && !selectedGroup) || !user || !user.id || !socket) {
-      console.log("Message not sent: missing required data", { selectedUser, selectedGroup, socket, user });
+      console.log("Message not sent: missing required data", {
+        selectedUser,
+        selectedGroup,
+        socket,
+        user,
+      });
       return;
     }
 
@@ -192,7 +224,7 @@ const Chat = () => {
     };
 
     const room = selectedUser
-      ? [user.id, selectedUser.id].sort().join('-')
+      ? [user.id, selectedUser.id].sort().join("-")
       : selectedGroup!.room_id;
     const targetId = selectedUser ? selectedUser.id : null;
 
@@ -210,7 +242,12 @@ const Chat = () => {
 
   const handleSendFile = async (file: File) => {
     if ((!selectedUser && !selectedGroup) || !user || !user.id || !socket) {
-      console.log("File not sent: missing required data", { selectedUser, selectedGroup, socket, user });
+      console.log("File not sent: missing required data", {
+        selectedUser,
+        selectedGroup,
+        socket,
+        user,
+      });
       return;
     }
 
@@ -219,9 +256,16 @@ const Chat = () => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/upload-file", formData, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/upload-file`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       const fileUrl = res.data.fileUrl;
       const message: Message = {
@@ -235,7 +279,7 @@ const Chat = () => {
       };
 
       const room = selectedUser
-        ? [user.id, selectedUser.id].sort().join('-')
+        ? [user.id, selectedUser.id].sort().join("-")
         : selectedGroup!.room_id;
       const targetId = selectedUser ? selectedUser.id : null;
 
@@ -257,7 +301,11 @@ const Chat = () => {
   };
 
   if (loading || !user || !socket) {
-    return <div className="flex items-center justify-center h-screen">Loading Chat...{!user ? " (Waiting for user data)" : ""}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading Chat...{!user ? " (Waiting for user data)" : ""}
+      </div>
+    );
   }
 
   return (

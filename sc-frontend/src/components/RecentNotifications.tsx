@@ -25,13 +25,19 @@ const RecentNotifications = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get("http://localhost:5000/api/notifications", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/notifications`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           const notifications = response.data;
           if (notifications.length > 0) {
             // Sort by sent_at descending
-            notifications.sort((a: any, b: any) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime());
+            notifications.sort(
+              (a: any, b: any) =>
+                new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+            );
             const latest = notifications[0]; // Now sorted by date
             setRecentNotification({
               id: latest.id,
@@ -74,14 +80,20 @@ const RecentNotifications = () => {
     <div className="bg-white rounded-xl shadow-sm w-[300px] mt-5 ml-13 overflow-hidden">
       <div className="p-4 bg-[#D8EAF3]">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-bold text-gray-800">Recent Notifications</h2>
+          <h2 className="text-lg font-bold text-gray-800">
+            Recent Notifications
+          </h2>
           <FaBell className="text-xl text-gray-600" />
         </div>
         <div className="flex items-start mb-3">
           <div className="w-2 h-2 bg-[#E63D37] rounded-full mt-2 mr-3"></div>
           <div>
-            <div className="text-md font-semibold text-gray-800">{recentNotification.message}</div>
-            <div className="text-sm text-gray-500 mt-1">{recentNotification.date}</div>
+            <div className="text-md font-semibold text-gray-800">
+              {recentNotification.message}
+            </div>
+            <div className="text-sm text-gray-500 mt-1">
+              {recentNotification.date}
+            </div>
           </div>
         </div>
       </div>
@@ -90,7 +102,9 @@ const RecentNotifications = () => {
         className="bg-[#C7EDFF] p-3 flex justify-end items-center cursor-pointer hover:bg-gray-200"
         onClick={() => navigate("/notifications")}
       >
-        <span className="text-blue-500 text-sm font-semibold mr-2">See More</span>
+        <span className="text-blue-500 text-sm font-semibold mr-2">
+          See More
+        </span>
         <FaArrowRight className="text-blue-500 text-sm" />
       </div>
     </div>

@@ -28,11 +28,18 @@ const AdminProfilePage = () => {
         address: user.address || "",
       });
       setPreviewImage(user.imageUrl || userImage);
-      console.log("AdminProfilePage: Initial render - user:", user, "previewImage:", previewImage);
+      console.log(
+        "AdminProfilePage: Initial render - user:",
+        user,
+        "previewImage:",
+        previewImage
+      );
     }
   }, [user]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -44,7 +51,10 @@ const AdminProfilePage = () => {
       reader.onloadend = () => {
         setSelectedImage(file);
         setPreviewImage(reader.result as string);
-        console.log("AdminProfilePage: Image selected - data URL:", reader.result);
+        console.log(
+          "AdminProfilePage: Image selected - data URL:",
+          reader.result
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -72,7 +82,7 @@ const AdminProfilePage = () => {
       }
 
       const res = await axios.put(
-        "http://localhost:5000/api/admin/profile",
+        `${import.meta.env.VITE_API_URL}/admin/profile`,
         formDataToSend,
         {
           headers: {
@@ -89,7 +99,9 @@ const AdminProfilePage = () => {
         setPreviewImage(updatedUser.imageUrl);
       }
       console.log("AdminProfilePage: Profile updated - user:", updatedUser);
-      navigate("/admin-dashboard", { state: { updatedImageUrl: updatedUser.imageUrl } });
+      navigate("/admin-dashboard", {
+        state: { updatedImageUrl: updatedUser.imageUrl },
+      });
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Profile update error:", error);
@@ -153,7 +165,9 @@ const AdminProfilePage = () => {
 
             <div className="flex-1 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Name</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Name
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -164,7 +178,9 @@ const AdminProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -175,7 +191,9 @@ const AdminProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Phone
+                </label>
                 <input
                   type="tel"
                   name="phone"
@@ -186,7 +204,9 @@ const AdminProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Address</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Address
+                </label>
                 <input
                   type="text"
                   name="address"
@@ -197,7 +217,9 @@ const AdminProfilePage = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Designation</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Designation
+                </label>
                 <input
                   type="text"
                   value="Admin"

@@ -38,16 +38,19 @@ const CoursePage = () => {
           console.error("No token or course found");
           return;
         }
-        const response = await axios.get("http://localhost:5000/api/coursework", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { course: user.course },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/coursework`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { course: user.course },
+          }
+        );
         const data = response.data;
-        // Map backend data to Course structure (assuming backend returns modules with files)
+
         const formattedCourse: Course = {
           id: 1,
           name: "Coursework",
-          modules: data.modules || [], // Adjust based on actual backend response
+          modules: data.modules || [],
         };
         setCourse(formattedCourse);
       } catch (error) {

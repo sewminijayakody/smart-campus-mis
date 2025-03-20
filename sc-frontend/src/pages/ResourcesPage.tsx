@@ -18,7 +18,10 @@ const ResourcesPage = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const [requests, setRequests] = useState<Request[] | null>(null);
-  const [newRequest, setNewRequest] = useState({ resourceType: "", details: "" });
+  const [newRequest, setNewRequest] = useState({
+    resourceType: "",
+    details: "",
+  });
   const [loading, setLoading] = useState<boolean>(true);
 
   // Fetch user-specific requests from backend
@@ -27,9 +30,12 @@ const ResourcesPage = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get("http://localhost:5000/api/requests/user", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/requests/user`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           setRequests(response.data);
         }
       } catch (error) {
@@ -48,14 +54,16 @@ const ResourcesPage = () => {
       const token = localStorage.getItem("token");
       if (token) {
         const response = await axios.post(
-          "http://localhost:5000/api/requests",
+          `${import.meta.env.VITE_API_URL}/requests`,
           {
             resourceType: newRequest.resourceType,
             details: newRequest.details,
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setRequests((prev) => (prev ? [...prev, response.data] : [response.data]));
+        setRequests((prev) =>
+          prev ? [...prev, response.data] : [response.data]
+        );
         setNewRequest({ resourceType: "", details: "" });
         console.log("New request submitted:", response.data);
       }
@@ -78,7 +86,9 @@ const ResourcesPage = () => {
   };
 
   const handleBack = () => {
-    navigate(user?.role === "lecturer" ? "/lecturer-dashboard" : "/student-dashboard");
+    navigate(
+      user?.role === "lecturer" ? "/lecturer-dashboard" : "/student-dashboard"
+    );
   };
 
   return (
@@ -97,23 +107,37 @@ const ResourcesPage = () => {
           {/* Request Form Section */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Submit a Request</h2>
-            <form onSubmit={handleSubmitRequest} className="bg-[#E8E9E9] p-4 rounded-lg shadow-md border-2 border-gray-300 space-y-4">
+            <form
+              onSubmit={handleSubmitRequest}
+              className="bg-[#E8E9E9] p-4 rounded-lg shadow-md border-2 border-gray-300 space-y-4"
+            >
               <div>
-                <label className="block text-sm font-medium text-gray-700">Resource Type</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Resource Type
+                </label>
                 <input
                   type="text"
                   value={newRequest.resourceType}
-                  onChange={(e) => setNewRequest({ ...newRequest, resourceType: e.target.value })}
+                  onChange={(e) =>
+                    setNewRequest({
+                      ...newRequest,
+                      resourceType: e.target.value,
+                    })
+                  }
                   className="mt-1 p-2 w-full border rounded-lg bg-[#D9D9D9] text-gray-700 placeholder-gray-500"
                   placeholder="e.g., Textbook, Room, Equipment"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Details</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Details
+                </label>
                 <textarea
                   value={newRequest.details}
-                  onChange={(e) => setNewRequest({ ...newRequest, details: e.target.value })}
+                  onChange={(e) =>
+                    setNewRequest({ ...newRequest, details: e.target.value })
+                  }
                   className="mt-1 p-2 w-full border rounded-lg bg-[#D9D9D9] text-gray-700 placeholder-gray-500"
                   placeholder="e.g., Request: Introduction to Algorithms E-Book"
                   required
@@ -134,15 +158,28 @@ const ResourcesPage = () => {
             <h2 className="text-xl font-semibold mb-4">Your Requests</h2>
             <div className="bg-[#E8E9E9] p-4 rounded-lg shadow-md border-2 border-gray-300">
               {loading ? (
-                <p className="text-sm text-gray-500">Loading your requests...</p>
+                <p className="text-sm text-gray-500">
+                  Loading your requests...
+                </p>
               ) : requests?.length === 0 ? (
-                <p className="text-sm text-gray-500">No requests submitted yet.</p>
+                <p className="text-sm text-gray-500">
+                  No requests submitted yet.
+                </p>
               ) : (
                 <ul className="space-y-2">
                   {requests?.map((request) => (
                     <li key={request.id} className="text-sm text-gray-700">
-                      <strong>{request.resourceType}</strong>: {request.details} - 
-                      <span className={`ml-2 ${request.status === "Approved" ? "text-green-600" : request.status === "Rejected" ? "text-red-600" : "text-yellow-600"}`}>
+                      <strong>{request.resourceType}</strong>: {request.details}{" "}
+                      -
+                      <span
+                        className={`ml-2 ${
+                          request.status === "Approved"
+                            ? "text-green-600"
+                            : request.status === "Rejected"
+                            ? "text-red-600"
+                            : "text-yellow-600"
+                        }`}
+                      >
                         {request.status}
                       </span>
                       {request.adminResponse && (

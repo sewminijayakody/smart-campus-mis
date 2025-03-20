@@ -42,10 +42,13 @@ const LecturerCourseworkPage = () => {
           console.error("No token or module found");
           return;
         }
-        const response = await axios.get("http://localhost:5000/api/coursework", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { module: user.module },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/coursework`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { module: user.module },
+          }
+        );
         const data = response.data;
         const formattedCourse: Course = {
           id: 1,
@@ -72,7 +75,9 @@ const LecturerCourseworkPage = () => {
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadFile || !user?.module || !user?.course) {
-      setUploadMessage("Please select a file and ensure module/course are assigned.");
+      setUploadMessage(
+        "Please select a file and ensure module/course are assigned."
+      );
       return;
     }
 
@@ -90,18 +95,25 @@ const LecturerCourseworkPage = () => {
       formData.append("course", user.course);
 
       // Removed unused 'response' variable
-      await axios.post("http://localhost:5000/api/coursework/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/coursework/upload`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       // Refresh coursework after upload
-      const fetchResponse = await axios.get("http://localhost:5000/api/coursework", {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { module: user.module },
-      });
+      const fetchResponse = await axios.get(
+        `${import.meta.env.VITE_API_URL}/coursework`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { module: user.module },
+        }
+      );
       const data = fetchResponse.data;
       const formattedCourse: Course = {
         id: 1,
@@ -144,7 +156,9 @@ const LecturerCourseworkPage = () => {
         <div className="bg-[#E8E9E9] p-6 rounded-lg shadow-md border-2 border-gray-300 mb-6">
           <form onSubmit={handleUpload} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Upload Coursework File</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Upload Coursework File
+              </label>
               <input
                 type="file"
                 onChange={handleFileChange}
@@ -162,7 +176,13 @@ const LecturerCourseworkPage = () => {
             </button>
           </form>
           {uploadMessage && (
-            <p className={`mt-4 text-center ${uploadMessage.includes("successfully") ? "text-green-600" : "text-red-600"}`}>
+            <p
+              className={`mt-4 text-center ${
+                uploadMessage.includes("successfully")
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
               {uploadMessage}
             </p>
           )}

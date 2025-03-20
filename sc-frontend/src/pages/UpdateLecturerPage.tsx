@@ -28,9 +28,12 @@ const UpdateLecturerPage: React.FC = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get(`http://localhost:5000/api/lecturers/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/lecturers/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           console.log("Fetched lecturer:", response.data);
           setLecturer(response.data);
           setFormData(response.data);
@@ -66,18 +69,24 @@ const UpdateLecturerPage: React.FC = () => {
       }
 
       await axios.put(
-        `http://localhost:5000/api/lecturers/${id}`,
+        `${import.meta.env.VITE_API_URL}/lecturers/${id}`,
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      navigate("/manage-lecturers", { state: { success: "Lecturer updated successfully!" } });
+      navigate("/manage-lecturers", {
+        state: { success: "Lecturer updated successfully!" },
+      });
     } catch (error) {
       console.error("Error updating lecturer:", error);
       if (error instanceof AxiosError) {
         if (error.response) {
-          setError(`Update failed: ${error.response.data.error || error.response.statusText}`);
+          setError(
+            `Update failed: ${
+              error.response.data.error || error.response.statusText
+            }`
+          );
         } else if (error.request) {
           setError("No response from server. Check your connection.");
         } else {
@@ -113,7 +122,9 @@ const UpdateLecturerPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-6 text-gray-800">
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Update Lecturer Profile</h1>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Update Lecturer Profile
+          </h1>
           <button
             onClick={handleBack}
             className="flex items-center justify-center w-12 h-12 bg-[#FF7700] text-white rounded-full shadow-lg hover:bg-orange-600 transition-transform transform hover:scale-110"
@@ -130,7 +141,10 @@ const UpdateLecturerPage: React.FC = () => {
         <div className="bg-white rounded-xl shadow-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Name
               </label>
               <input
@@ -144,7 +158,10 @@ const UpdateLecturerPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -158,7 +175,10 @@ const UpdateLecturerPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Phone
               </label>
               <input
@@ -172,7 +192,10 @@ const UpdateLecturerPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Address
               </label>
               <input
@@ -186,7 +209,10 @@ const UpdateLecturerPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="course" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="course"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Course
               </label>
               <input
@@ -200,7 +226,10 @@ const UpdateLecturerPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="module" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="module"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Module
               </label>
               <input

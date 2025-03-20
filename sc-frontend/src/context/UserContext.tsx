@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import axios from "axios";
 
 // Define types
@@ -32,9 +38,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const initializeUser = async () => {
       const token = localStorage.getItem("token");
-      if (token && !user) { // Only fetch if user isn’t already set
+      if (token && !user) {
+        // Only fetch if user isn’t already set
         try {
-          const res = await axios.get("http://localhost:5000/api/user", {
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const userData = res.data.user;

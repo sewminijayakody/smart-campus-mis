@@ -269,7 +269,7 @@ app.get("/api/student/dashboard", authMiddleware, async (req, res) => {
 });
 
 app.get("/api/lecturer/dashboard", authMiddleware, async (req, res) => {
-  console.log("HEY_REQUESTING_LECTURERS");
+ 
   if (req.user.role !== "lecturer") {
     return res.status(403).json({ message: "Access denied. Lecturers only." });
   }
@@ -278,9 +278,7 @@ app.get("/api/lecturer/dashboard", authMiddleware, async (req, res) => {
       "SELECT id, name, role, email, course, startDate, endDate, phone, address, imageUrl, module FROM users WHERE id = ?",
       [req.user.id]
     );
-    // 'SELECT id, name, role, email, course, startDate, endDate, phone, address, imageUrl, module FROM users WHERE id = ?',
-    console.log(lecturer);
-
+   
     if (lecturer.length === 0)
       return res.status(404).json({ message: "Lecturer not found" });
     console.log("Lecturer dashboard data:", lecturer[0]);

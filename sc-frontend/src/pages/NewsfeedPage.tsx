@@ -6,10 +6,14 @@ import axios from "axios";
 
 const NewsfeedPage = () => {
   const navigate = useNavigate();
-  const [option, setOption] = useState<"notification" | "announcement" | null>(null);
+  const [option, setOption] = useState<"notification" | "announcement" | null>(
+    null
+  );
   const [message, setMessage] = useState("");
   const [recipientId, setRecipientId] = useState<number | null>(null);
-  const [users, setUsers] = useState<{ id: number; name: string; role: string }[]>([]);
+  const [users, setUsers] = useState<
+    { id: number; name: string; role: string }[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deliveryFeedback, setDeliveryFeedback] = useState<string[]>([]); // New state for delivery feedback
@@ -19,9 +23,12 @@ const NewsfeedPage = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get("http://localhost:5000/api/users", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/users`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           setUsers(response.data.users);
         }
       } catch (err) {
@@ -44,7 +51,7 @@ const NewsfeedPage = () => {
       if (token) {
         if (option === "notification") {
           const response = await axios.post(
-            "http://localhost:5000/api/notifications",
+            `${import.meta.env.VITE_API_URL}/notifications`,
             {
               message,
               recipientId: recipientId || null,
@@ -53,15 +60,23 @@ const NewsfeedPage = () => {
             { headers: { Authorization: `Bearer ${token}` } }
           );
           // Process delivery feedback
-          const feedback = response.data.deliveryResults.map((result: any, index: number) => {
-            const emailStatus = result.emailResult.emailSent !== false ? 'Email sent successfully' : `Email failed: ${result.emailResult.emailError}`;
-            const smsStatus = result.smsResult.smsSent !== false ? 'SMS sent successfully' : `SMS failed: ${result.smsResult.smsError}`;
-            return `Recipient ${index + 1}: ${emailStatus}, ${smsStatus}`;
-          });
+          const feedback = response.data.deliveryResults.map(
+            (result: any, index: number) => {
+              const emailStatus =
+                result.emailResult.emailSent !== false
+                  ? "Email sent successfully"
+                  : `Email failed: ${result.emailResult.emailError}`;
+              const smsStatus =
+                result.smsResult.smsSent !== false
+                  ? "SMS sent successfully"
+                  : `SMS failed: ${result.smsResult.smsError}`;
+              return `Recipient ${index + 1}: ${emailStatus}, ${smsStatus}`;
+            }
+          );
           setDeliveryFeedback(feedback);
         } else if (option === "announcement") {
           await axios.post(
-            "http://localhost:5000/api/announcements",
+            `${import.meta.env.VITE_API_URL}/announcements`,
             { message },
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -69,7 +84,11 @@ const NewsfeedPage = () => {
         setMessage("");
         setRecipientId(null);
         setOption(null);
-        alert(`${option === "notification" ? "Notification" : "Announcement"} sent successfully!`);
+        alert(
+          `${
+            option === "notification" ? "Notification" : "Announcement"
+          } sent successfully!`
+        );
       }
     } catch (err) {
       console.error(`Error sending ${option}:`, err);
@@ -100,11 +119,15 @@ const NewsfeedPage = () => {
           <select
             value={option || ""}
             onChange={(e) =>
-              setOption(e.target.value as "notification" | "announcement" | null)
+              setOption(
+                e.target.value as "notification" | "announcement" | null
+              )
             }
             className="w-full p-2 border rounded-lg bg-gray-100"
           >
-            <option value="" disabled>Select an option</option>
+            <option value="" disabled>
+              Select an option
+            </option>
             <option value="notification">Send Notification</option>
             <option value="announcement">Send Announcement</option>
           </select>
@@ -132,7 +155,11 @@ const NewsfeedPage = () => {
                 </label>
                 <select
                   value={recipientId || ""}
-                  onChange={(e) => setRecipientId(e.target.value ? parseInt(e.target.value) : null)}
+                  onChange={(e) =>
+                    setRecipientId(
+                      e.target.value ? parseInt(e.target.value) : null
+                    )
+                  }
                   className="w-full p-2 border rounded-lg bg-gray-100"
                 >
                   <option value="">All Users</option>
@@ -150,12 +177,18 @@ const NewsfeedPage = () => {
               disabled={loading}
               className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 disabled:bg-blue-300"
             >
-              {loading ? "Sending..." : option === "notification" ? "Send Notification" : "Send Announcement"}
+              {loading
+                ? "Sending..."
+                : option === "notification"
+                ? "Send Notification"
+                : "Send Announcement"}
             </button>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             {deliveryFeedback.length > 0 && (
               <div className="mt-4">
-                <h3 className="text-sm font-medium text-gray-700">Delivery Feedback:</h3>
+                <h3 className="text-sm font-medium text-gray-700">
+                  Delivery Feedback:
+                </h3>
                 <ul className="list-disc list-inside text-sm text-gray-600">
                   {deliveryFeedback.map((feedback, index) => (
                     <li key={index}>{feedback}</li>

@@ -13,7 +13,10 @@ const ScheduleEventsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  console.log("Rendering ScheduleEventsPage at /schedule-events, selected date:", date);
+  console.log(
+    "Rendering ScheduleEventsPage at /schedule-events, selected date:",
+    date
+  );
 
   const handleBack = () => {
     navigate("/admin-dashboard");
@@ -34,11 +37,13 @@ const ScheduleEventsPage: React.FC = () => {
       }
 
       // Format the date as YYYY-MM-DD using local date components
-      const formattedDate = date.toLocaleDateString("en-CA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }).replace(/\//g, "-"); // Converts to YYYY-MM-DD format
+      const formattedDate = date
+        .toLocaleDateString("en-CA", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\//g, "-"); // Converts to YYYY-MM-DD format
       console.log("Formatted date for submission:", formattedDate);
 
       const eventData = {
@@ -49,7 +54,7 @@ const ScheduleEventsPage: React.FC = () => {
       };
       console.log("Sending event data:", eventData);
 
-      await axios.post("http://localhost:5000/api/events", eventData, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/events`, eventData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -57,24 +62,40 @@ const ScheduleEventsPage: React.FC = () => {
       alert("Event scheduled successfully!");
       navigate("/admin-dashboard");
     } catch (error: any) {
-      console.error("Axios error details:", error.response ? error.response.data : error.message);
+      console.error(
+        "Axios error details:",
+        error.response ? error.response.data : error.message
+      );
       setError("Failed to schedule event. Please try again.");
     }
   };
 
-  const handlePrevMonth = () => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)));
-  const handleNextMonth = () => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)));
+  const handlePrevMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+    );
+  const handleNextMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+    );
   const handleDateSelect = (day: number) => {
-    const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+    const newDate = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      day
+    );
     console.log("Date selected (local time):", newDate);
     console.log("Date selected (ISO string):", newDate.toISOString());
     setDate(newDate);
   };
 
-  const getMonthName = (date: Date) => date.toLocaleString("default", { month: "long" });
+  const getMonthName = (date: Date) =>
+    date.toLocaleString("default", { month: "long" });
   const getYear = (date: Date) => date.getFullYear();
-  const getDaysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  const getFirstDayOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  const getDaysInMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  const getFirstDayOfMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 text-black">
@@ -92,7 +113,9 @@ const ScheduleEventsPage: React.FC = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Date
+              </label>
               <div className="bg-[#E7FFED] p-4 rounded-lg shadow-md border-45 border-[#D8F3E3] mt-2 flex justify-center">
                 <div className="w-full max-w-sm">
                   <div className="flex justify-between items-center mb-2">
@@ -114,41 +137,57 @@ const ScheduleEventsPage: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-7 gap-0.5 text-center">
                     {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
-                      <div key={day} className="text-xxs font-semibold text-gray-600">
+                      <div
+                        key={day}
+                        className="text-xxs font-semibold text-gray-600"
+                      >
                         {day}
                       </div>
                     ))}
-                    {Array.from({ length: getFirstDayOfMonth(currentMonth) }, (_, i) => (
-                      <div key={`empty-${i}`} />
-                    ))}
-                    {Array.from({ length: getDaysInMonth(currentMonth) }, (_, i) => {
-                      const day = i + 1;
-                      const isSelected =
-                        day === date.getDate() &&
-                        currentMonth.getMonth() === date.getMonth() &&
-                        currentMonth.getFullYear() === date.getFullYear();
-                      const isToday =
-                        day === new Date().getDate() &&
-                        currentMonth.getMonth() === new Date().getMonth() &&
-                        currentMonth.getFullYear() === new Date().getFullYear();
-                      return (
-                        <div
-                          key={day}
-                          className={`text-xxs p-1 rounded-full cursor-pointer ${
-                            isSelected ? "bg-[#FF7700] text-white" : isToday ? "bg-orange-300" : "hover:bg-gray-200"
-                          }`}
-                          onClick={() => handleDateSelect(day)}
-                        >
-                          {day}
-                        </div>
-                      );
-                    })}
+                    {Array.from(
+                      { length: getFirstDayOfMonth(currentMonth) },
+                      (_, i) => (
+                        <div key={`empty-${i}`} />
+                      )
+                    )}
+                    {Array.from(
+                      { length: getDaysInMonth(currentMonth) },
+                      (_, i) => {
+                        const day = i + 1;
+                        const isSelected =
+                          day === date.getDate() &&
+                          currentMonth.getMonth() === date.getMonth() &&
+                          currentMonth.getFullYear() === date.getFullYear();
+                        const isToday =
+                          day === new Date().getDate() &&
+                          currentMonth.getMonth() === new Date().getMonth() &&
+                          currentMonth.getFullYear() ===
+                            new Date().getFullYear();
+                        return (
+                          <div
+                            key={day}
+                            className={`text-xxs p-1 rounded-full cursor-pointer ${
+                              isSelected
+                                ? "bg-[#FF7700] text-white"
+                                : isToday
+                                ? "bg-orange-300"
+                                : "hover:bg-gray-200"
+                            }`}
+                            onClick={() => handleDateSelect(day)}
+                          >
+                            {day}
+                          </div>
+                        );
+                      }
+                    )}
                   </div>
                 </div>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
               <input
                 type="text"
                 value={title}
@@ -159,7 +198,9 @@ const ScheduleEventsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Time</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Time
+              </label>
               <input
                 type="text"
                 value={time}
@@ -170,7 +211,9 @@ const ScheduleEventsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Location</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Location
+              </label>
               <input
                 type="text"
                 value={location}

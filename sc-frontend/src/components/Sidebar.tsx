@@ -16,7 +16,13 @@ interface SidebarProps {
   onCreateGroup?: () => void;
 }
 
-const Sidebar = ({ users, onSelectUser, groups = [], onSelectGroup, onCreateGroup }: SidebarProps) => {
+const Sidebar = ({
+  users,
+  onSelectUser,
+  groups = [],
+  onSelectGroup,
+  onCreateGroup,
+}: SidebarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -30,10 +36,16 @@ const Sidebar = ({ users, onSelectUser, groups = [], onSelectGroup, onCreateGrou
 
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/api/groups", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groups`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ name: groupName, memberIds: selectedMembers.map(Number) }),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: groupName,
+          memberIds: selectedMembers.map(Number),
+        }),
       });
       if (res.ok && onCreateGroup) onCreateGroup();
       setIsCreatingGroup(false);
@@ -54,10 +66,7 @@ const Sidebar = ({ users, onSelectUser, groups = [], onSelectGroup, onCreateGrou
   };
 
   // Combine users and groups into a single list with proper typing
-  const combinedList: Array<User | Group> = [
-    ...users,
-    ...groups,
-  ];
+  const combinedList: Array<User | Group> = [...users, ...groups];
 
   return (
     <div className="w-1/4 p-4 m-4 h-full flex flex-col relative">
@@ -86,7 +95,9 @@ const Sidebar = ({ users, onSelectUser, groups = [], onSelectGroup, onCreateGrou
       <div className="bg-[#D8EAF3] p-4 rounded-xl flex-1 overflow-y-auto">
         <div className="space-y-2 max-h-full overflow-y-auto">
           {combinedList
-            .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
             .map((item) => (
               <div
                 key={isGroup(item) ? item.room_id : item.id}
@@ -123,7 +134,9 @@ const Sidebar = ({ users, onSelectUser, groups = [], onSelectGroup, onCreateGrou
       {isCreatingGroup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-1/3 transform transition-all">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Create a New Group</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">
+              Create a New Group
+            </h2>
             <input
               type="text"
               value={groupName}

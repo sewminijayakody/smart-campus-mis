@@ -19,7 +19,11 @@ interface ScheduleSectionProps {
   registeredEvents: number[]; // Array of registered event IDs
 }
 
-const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: ScheduleSectionProps) => {
+const ScheduleSection = ({
+  selectedDate,
+  setSelectedDate,
+  registeredEvents,
+}: ScheduleSectionProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -32,10 +36,16 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
           console.error("No token found in localStorage for fetching events");
           return;
         }
-        console.log("Fetching events for ScheduleSection, registeredEvents:", registeredEvents);
-        const response = await axios.get("http://localhost:5000/api/events", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log(
+          "Fetching events for ScheduleSection, registeredEvents:",
+          registeredEvents
+        );
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/events`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const fetchedEvents = response.data.map((event: Event) => ({
           ...event,
           status: "upcoming", // Will be updated dynamically below
@@ -51,9 +61,13 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
 
   // Function to parse time string and combine with date
   const getEventDateTime = (eventDate: string, eventTime: string) => {
-    const [startTime, endTime] = eventTime.includes("-") ? eventTime.split(" - ") : [eventTime, eventTime];
+    const [startTime, endTime] = eventTime.includes("-")
+      ? eventTime.split(" - ")
+      : [eventTime, eventTime];
     const [startHourMin, startPeriod] = startTime.trim().split(" ");
-    const [endHourMin, endPeriod] = endTime ? endTime.trim().split(" ") : [startHourMin, startPeriod];
+    const [endHourMin, endPeriod] = endTime
+      ? endTime.trim().split(" ")
+      : [startHourMin, startPeriod];
     const [startHour, startMinute] = startHourMin.split(":").map(Number);
     const [endHour, endMinute] = endHourMin.split(":").map(Number);
 
@@ -90,7 +104,8 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
     }))
     .filter((event) => {
       const eventDate = new Date(event.date);
-      const isSameDate = eventDate.toDateString() === selectedDate.toDateString();
+      const isSameDate =
+        eventDate.toDateString() === selectedDate.toDateString();
       const isRegistered = registeredEvents.includes(event.id);
       console.log(
         `Event ID: ${event.id}, Date: ${event.date}, Is Same Date: ${isSameDate}, Is Registered: ${isRegistered}`
@@ -98,17 +113,24 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
       return isSameDate && isRegistered; // Show only registered events on the selected date
     });
 
-  const getMonthName = (date: Date) => date.toLocaleString("default", { month: "long" });
+  const getMonthName = (date: Date) =>
+    date.toLocaleString("default", { month: "long" });
   const getYear = (date: Date) => date.getFullYear();
-  const getDaysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  const getFirstDayOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  const getDaysInMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  const getFirstDayOfMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
   const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)));
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+    );
   };
 
   const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)));
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+    );
   };
 
   // Determine label based on selected date
@@ -127,20 +149,30 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">{getScheduleLabel()}</h2>
         <span className="text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-full">
-          {selectedDate.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" })}
+          {selectedDate.toLocaleDateString("en-US", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
         </span>
       </div>
 
       {/* Calendar */}
       <div className="bg-white p-3 rounded-lg shadow-md mb-4">
         <div className="flex justify-between items-center mb-2">
-          <button onClick={handlePrevMonth} className="text-gray-600 hover:text-[#FF7700]">
+          <button
+            onClick={handlePrevMonth}
+            className="text-gray-600 hover:text-[#FF7700]"
+          >
             <FaArrowLeft />
           </button>
           <h3 className="text-sm font-medium">
             {getMonthName(currentMonth)} {getYear(currentMonth)}
           </h3>
-          <button onClick={handleNextMonth} className="text-gray-600 hover:text-[#FF7700]">
+          <button
+            onClick={handleNextMonth}
+            className="text-gray-600 hover:text-[#FF7700]"
+          >
             <FaArrowRight />
           </button>
         </div>
@@ -167,9 +199,21 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
               <div
                 key={day}
                 className={`text-xs p-1 rounded-full cursor-pointer ${
-                  isSelected ? "bg-[#FF7700] text-white" : isToday ? "bg-orange-300" : "hover:bg-gray-200"
+                  isSelected
+                    ? "bg-[#FF7700] text-white"
+                    : isToday
+                    ? "bg-orange-300"
+                    : "hover:bg-gray-200"
                 }`}
-                onClick={() => setSelectedDate(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day))}
+                onClick={() =>
+                  setSelectedDate(
+                    new Date(
+                      currentMonth.getFullYear(),
+                      currentMonth.getMonth(),
+                      day
+                    )
+                  )
+                }
               >
                 {day}
               </div>
@@ -181,7 +225,9 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
       {/* Events List (Showing registered events for selected date) */}
       <div className="mb-auto space-y-4 overflow-y-auto flex-1">
         {filteredEvents.length === 0 ? (
-          <p className="text-sm text-gray-500">No registered events for this date</p>
+          <p className="text-sm text-gray-500">
+            No registered events for this date
+          </p>
         ) : (
           filteredEvents.map((event) => (
             <div
@@ -192,7 +238,9 @@ const ScheduleSection = ({ selectedDate, setSelectedDate, registeredEvents }: Sc
                 <div className="flex items-center space-x-2 mb-1">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
-                      event.status === "inProgress" ? "bg-green-500" : "bg-yellow-400"
+                      event.status === "inProgress"
+                        ? "bg-green-500"
+                        : "bg-yellow-400"
                     }`}
                   >
                     {event.status === "inProgress" ? "In Progress" : "Upcoming"}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaBell } from "react-icons/fa";
 import io from "socket.io-client";
 import axios from "axios";
-import { useUser } from "../context/UserContext"; 
+import { useUser } from "../context/UserContext";
 
 interface Notification {
   [x: string]: string | number | Date;
@@ -32,20 +32,28 @@ const NotificationsPage = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get("http://localhost:5000/api/notifications", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          let fetchedNotifications: Notification[] = response.data.map((item: any) => ({
-            id: item.id,
-            type: item.type,
-            sender: item.sender_name,
-            designation: "Administrator",
-            message: item.message,
-            color: "bg-yellow-100",
-          }));
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/notifications`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          let fetchedNotifications: Notification[] = response.data.map(
+            (item: any) => ({
+              id: item.id,
+              type: item.type,
+              sender: item.sender_name,
+              designation: "Administrator",
+              message: item.message,
+              color: "bg-yellow-100",
+            })
+          );
 
           // Sort notifications by sent_at descending
-          fetchedNotifications = fetchedNotifications.sort((a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime());
+          fetchedNotifications = fetchedNotifications.sort(
+            (a, b) =>
+              new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+          );
           setNotifications(fetchedNotifications);
         }
       } catch (err) {
@@ -104,11 +112,15 @@ const NotificationsPage = () => {
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
                 <FaBell className="text-gray-700" />
-                <h3 className="font-semibold text-gray-700">{notification.type} Notification</h3>
+                <h3 className="font-semibold text-gray-700">
+                  {notification.type} Notification
+                </h3>
               </div>
               <div className="text-sm text-gray-600">
                 <span>{notification.sender}</span>
-                <span className="text-gray-400 ml-1">({notification.designation})</span>
+                <span className="text-gray-400 ml-1">
+                  ({notification.designation})
+                </span>
               </div>
             </div>
             <p className="text-gray-800">{notification.message}</p>

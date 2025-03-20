@@ -26,14 +26,20 @@ const RequestsPage: React.FC = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const response = await axios.get("http://localhost:5000/api/requests", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/requests`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           const enrichedRequests = await Promise.all(
             response.data.map(async (req: Request) => {
-              const userResponse = await axios.get(`http://localhost:5000/api/user/${req.user_id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
+              const userResponse = await axios.get(
+                `${import.meta.env.VITE_API_URL}/user/${req.user_id}`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
               return { ...req, userName: userResponse.data.name };
             })
           );
@@ -52,18 +58,24 @@ const RequestsPage: React.FC = () => {
     navigate("/admin-dashboard");
   };
 
-  const handleStatusChange = async (requestId: number, newStatus: "Approved" | "Rejected", response?: string) => {
+  const handleStatusChange = async (
+    requestId: number,
+    newStatus: "Approved" | "Rejected",
+    response?: string
+  ) => {
     try {
       const token = localStorage.getItem("token");
       if (token) {
         await axios.post(
-          `http://localhost:5000/api/requests/${requestId}/status`,
+          `${import.meta.env.VITE_API_URL}/requests/${requestId}/status`,
           { status: newStatus, adminResponse: response },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setRequests((prev) =>
           prev.map((req) =>
-            req.id === requestId ? { ...req, status: newStatus, adminResponse: response } : req
+            req.id === requestId
+              ? { ...req, status: newStatus, adminResponse: response }
+              : req
           )
         );
       }
@@ -103,7 +115,9 @@ const RequestsPage: React.FC = () => {
           </button>
         </div>
         <div className="mb-4">
-          <label className="mr-2 text-sm font-medium text-gray-700">Filter by Status:</label>
+          <label className="mr-2 text-sm font-medium text-gray-700">
+            Filter by Status:
+          </label>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
@@ -154,7 +168,8 @@ const RequestsPage: React.FC = () => {
                       </p>
                       {request.adminResponse && (
                         <p className="text-sm text-gray-700">
-                          <strong>Admin Response:</strong> {request.adminResponse}
+                          <strong>Admin Response:</strong>{" "}
+                          {request.adminResponse}
                         </p>
                       )}
                       <p className="text-sm text-gray-500">
@@ -165,7 +180,11 @@ const RequestsPage: React.FC = () => {
                       <div className="space-x-2">
                         <button
                           onClick={() =>
-                            handleStatusChange(request.id, "Approved", "Request approved")
+                            handleStatusChange(
+                              request.id,
+                              "Approved",
+                              "Request approved"
+                            )
                           }
                           className="text-green-600 hover:text-green-800"
                         >
@@ -173,7 +192,11 @@ const RequestsPage: React.FC = () => {
                         </button>
                         <button
                           onClick={() =>
-                            handleStatusChange(request.id, "Rejected", "Request rejected")
+                            handleStatusChange(
+                              request.id,
+                              "Rejected",
+                              "Request rejected"
+                            )
                           }
                           className="text-red-600 hover:text-red-800"
                         >

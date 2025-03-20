@@ -38,7 +38,7 @@ const ScheduleEventsPage: React.FC = () => {
         date: date.toISOString().split("T")[0], // Store as YYYY-MM-DD
       };
 
-      await axios.post("http://localhost:5000/api/events", eventData, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/events`, eventData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -67,7 +67,9 @@ const ScheduleEventsPage: React.FC = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Date
+              </label>
               <Calendar
                 onChange={(value) => setDate(value as Date)}
                 value={date}
@@ -75,7 +77,9 @@ const ScheduleEventsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
               <input
                 type="text"
                 value={title}
@@ -86,7 +90,9 @@ const ScheduleEventsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Time</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Time
+              </label>
               <input
                 type="text"
                 value={time}
@@ -97,7 +103,9 @@ const ScheduleEventsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Location</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Location
+              </label>
               <input
                 type="text"
                 value={location}

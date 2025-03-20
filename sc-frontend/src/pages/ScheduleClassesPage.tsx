@@ -36,10 +36,13 @@ const ScheduleClassesPage = () => {
           console.error("No token or module found");
           return;
         }
-        const response = await axios.get("http://localhost:5000/api/schedule", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { module: user.module },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/schedule`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { module: user.module },
+          }
+        );
         setSchedules(response.data);
       } catch (error) {
         console.error("Error fetching schedules:", error);
@@ -54,7 +57,9 @@ const ScheduleClassesPage = () => {
   const handleScheduleClass = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.module || !user?.course) {
-      setScheduleMessage("No module or course assigned. Please contact support.");
+      setScheduleMessage(
+        "No module or course assigned. Please contact support."
+      );
       return;
     }
 
@@ -67,7 +72,7 @@ const ScheduleClassesPage = () => {
 
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5000/api/schedule",
+        `${import.meta.env.VITE_API_URL}/schedule`,
         {
           module: user.module,
           course: user.course,
@@ -108,31 +113,43 @@ const ScheduleClassesPage = () => {
         <div className="bg-[#E8E9E9] p-6 rounded-lg shadow-md border-2 border-gray-300 mb-6">
           <form onSubmit={handleScheduleClass} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Date
+              </label>
               <input
                 type="date"
                 value={newSchedule.date}
-                onChange={(e) => setNewSchedule({ ...newSchedule, date: e.target.value })}
+                onChange={(e) =>
+                  setNewSchedule({ ...newSchedule, date: e.target.value })
+                }
                 className="mt-1 p-2 w-full border rounded-lg bg-[#D9D9D9] text-gray-700"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Time</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Time
+              </label>
               <input
                 type="time"
                 value={newSchedule.time}
-                onChange={(e) => setNewSchedule({ ...newSchedule, time: e.target.value })}
+                onChange={(e) =>
+                  setNewSchedule({ ...newSchedule, time: e.target.value })
+                }
                 className="mt-1 p-2 w-full border rounded-lg bg-[#D9D9D9] text-gray-700"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Location</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Location
+              </label>
               <input
                 type="text"
                 value={newSchedule.location}
-                onChange={(e) => setNewSchedule({ ...newSchedule, location: e.target.value })}
+                onChange={(e) =>
+                  setNewSchedule({ ...newSchedule, location: e.target.value })
+                }
                 className="mt-1 p-2 w-full border rounded-lg bg-[#D9D9D9] text-gray-700"
                 placeholder="Enter location"
                 required
@@ -148,7 +165,13 @@ const ScheduleClassesPage = () => {
             </button>
           </form>
           {scheduleMessage && (
-            <p className={`mt-4 text-center ${scheduleMessage.includes("successfully") ? "text-green-600" : "text-red-600"}`}>
+            <p
+              className={`mt-4 text-center ${
+                scheduleMessage.includes("successfully")
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
               {scheduleMessage}
             </p>
           )}
@@ -162,14 +185,25 @@ const ScheduleClassesPage = () => {
             <p className="text-sm text-gray-500">No classes scheduled yet.</p>
           ) : (
             schedules.map((schedule) => (
-              <div key={schedule.id} className="bg-[#E7FFFF] p-4 rounded-lg flex items-start space-x-4">
+              <div
+                key={schedule.id}
+                className="bg-[#E7FFFF] p-4 rounded-lg flex items-start space-x-4"
+              >
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                 <div>
                   <h3 className="text-md font-medium">{schedule.module}</h3>
                   <p className="text-sm text-gray-600">{schedule.location}</p>
                   <p className="text-sm">{schedule.time}</p>
-                  <p className="text-sm text-gray-500">{new Date(schedule.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
-                  <p className="text-sm text-gray-500">Registered Students: {schedule.registeredUsers || 0}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(schedule.date).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Registered Students: {schedule.registeredUsers || 0}
+                  </p>
                 </div>
               </div>
             ))
