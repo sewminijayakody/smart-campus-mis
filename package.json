@@ -1,0 +1,9 @@
+{
+  "workspaces": [
+    "sc-backend"
+  ],
+  "scripts": {
+    "install": "cd backend && npm install",
+    "start": "cd backend && npm start"
+  }
+}

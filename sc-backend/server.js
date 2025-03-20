@@ -44,7 +44,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
@@ -55,7 +55,7 @@ const io = new Server(server, {
 app.use(json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
@@ -269,7 +269,6 @@ app.get("/api/student/dashboard", authMiddleware, async (req, res) => {
 });
 
 app.get("/api/lecturer/dashboard", authMiddleware, async (req, res) => {
- 
   if (req.user.role !== "lecturer") {
     return res.status(403).json({ message: "Access denied. Lecturers only." });
   }
@@ -278,7 +277,7 @@ app.get("/api/lecturer/dashboard", authMiddleware, async (req, res) => {
       "SELECT id, name, role, email, course, startDate, endDate, phone, address, imageUrl, module FROM users WHERE id = ?",
       [req.user.id]
     );
-   
+
     if (lecturer.length === 0)
       return res.status(404).json({ message: "Lecturer not found" });
     console.log("Lecturer dashboard data:", lecturer[0]);
@@ -1061,7 +1060,6 @@ app.delete("/api/students/:id", authMiddleware, async (req, res) => {
 });
 
 app.get("/api/lecturers", authMiddleware, async (req, res) => {
-  
   if (req.user.role !== "admin") {
     return res.status(403).json({ message: "Access denied. Admins only." });
   }
