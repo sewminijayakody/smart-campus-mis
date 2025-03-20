@@ -10,7 +10,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FiMoreVertical } from "react-icons/fi";
 
 interface FileShareProps {
-  onSendFile: (file: File) => void;
+  onSendFile: (file: File)  void;
 }
 
 const FileShare: React.FC<FileShareProps> = ({ onSendFile }) => {
