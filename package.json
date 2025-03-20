@@ -3,7 +3,7 @@
     "sc-backend"
   ],
   "scripts": {
-    "install": "cd backend && npm install",
-    "start": "cd backend && npm start"
+    "install": "cd sc-backend && npm install",
+    "start": "cd sc-backend && npm start"
   }
 }
