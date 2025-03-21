@@ -100,7 +100,7 @@ const Chat = () => {
       socket.disconnect();
     }
 
-    const newSocket = io("http://localhost:5000", {
+    const newSocket = io(`${import.meta.env.VITE_API}`, {
       auth: { token: `Bearer ${token}` },
       transports: ["websocket", "polling"],
       withCredentials: true,

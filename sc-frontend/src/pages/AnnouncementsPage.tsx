@@ -21,7 +21,7 @@ interface BackendAnnouncement {
   sender_name: string;
 }
 
-const socket = io("http://localhost:5000", {
+const socket = io(`${import.meta.env.VITE_API}`, {
   withCredentials: true,
   extraHeaders: {
     Authorization: `Bearer ${localStorage.getItem("token")}`,

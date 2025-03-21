@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import axios from "axios";
 
-const socket = io("http://localhost:5000", {
+const socket = io(`${import.meta.env.VITE_API}`, {
   withCredentials: true,
   extraHeaders: {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
